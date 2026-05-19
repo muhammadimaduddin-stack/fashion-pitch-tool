@@ -1,20 +1,20 @@
 const express = require('express');
 const cors = require('cors');
 const fetch = require('node-fetch');
+const path = require('path');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
 
 const KEEPA_KEY = 'q2vptdtmldf43g99lc8rfpv1cjsbak945atih5kbpod1j8ifa4t45i7naivc8fau';
 const GROQ_KEY = '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';
 
-// Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', keepa: 'connected', groq: 'connected' });
 });
 
-// Keepa search
 app.get('/api/keepa/search', async (req, res) => {
   const { term } = req.query;
   if (!term) return res.status(400).json({ error: 'Missing term' });
@@ -40,7 +40,6 @@ app.get('/api/keepa/search', async (req, res) => {
   }
 });
 
-// Keepa single product
 app.get('/api/keepa/product', async (req, res) => {
   const { asin } = req.query;
   if (!asin) return res.status(400).json({ error: 'Missing asin' });
@@ -66,7 +65,6 @@ app.get('/api/keepa/product', async (req, res) => {
   }
 });
 
-// GROQ AI
 app.post('/api/groq', async (req, res) => {
   const { message, context } = req.body;
   if (!message) return res.status(400).json({ error: 'Missing message' });
@@ -77,7 +75,7 @@ app.post('/api/groq', async (req, res) => {
       body: JSON.stringify({
         model: 'llama3-8b-8192',
         messages: [
-          { role: 'system', content: `You are a fashion product research assistant helping pitch Amazon products to a manager. Be concise, max 2-3 sentences. Context: ${JSON.stringify(context || {})}` },
+          { role: 'system', content: `Fashion product research assistant. Help pitch Amazon products to manager. Be concise, max 2-3 sentences. Context: ${JSON.stringify(context || {})}` },
           { role: 'user', content: message }
         ],
         max_tokens: 300,
@@ -91,7 +89,6 @@ app.post('/api/groq', async (req, res) => {
   }
 });
 
-// Price history helper
 function extractPriceHistory(csv) {
   const points = [];
   for (let i = 0; i < csv.length - 1; i += 2) {
