@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Fashion Research Tool</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;
+  --text:#e8e9f0;--muted:#7b7f94;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.15);
+  --accent:#5b6ef5;--accent2:#4a5ce0;--green:#4ade80;--green-bg:rgba(74,222,128,0.1);
+  --red:#f04f5e;--red-bg:rgba(240,79,94,0.1);--amber:#f59e0b;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh;}
+
+/* ── HEADER ── */
+.hdr{display:flex;align-items:center;gap:16px;padding:14px 24px;background:var(--surface);border-bottom:1px solid var(--border);}
+.hdr-logo{font-size:15px;font-weight:700;color:var(--text);}
+.hdr-logo span{color:var(--accent);}
+.hdr-status{display:flex;gap:8px;margin-left:auto;}
+.status-pill{font-size:11px;padding:3px 10px;border-radius:99px;font-weight:500;}
+.s-green{background:var(--green-bg);color:var(--green);border:1px solid rgba(74,222,128,0.25);}
+.s-red{background:var(--red-bg);color:var(--red);border:1px solid rgba(240,79,94,0.25);}
+
+/* ── LAYOUT ── */
+.layout{display:flex;height:calc(100vh - 53px);}
+
+/* ── SIDEBAR ── */
+.sb{width:200px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);padding:14px 10px;overflow-y:auto;}
+.sb-title{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;padding-left:2px;}
+.sb-toggle{display:flex;gap:3px;background:var(--bg);border-radius:8px;padding:3px;margin-bottom:14px;}
+.sb-tab{flex:1;padding:5px 0;font-size:11px;font-weight:500;border:none;border-radius:6px;cursor:pointer;text-align:center;background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;transition:all .15s;}
+.sb-tab.on{background:var(--accent);color:#fff;}
+.sb-sec{margin-bottom:14px;}
+.sb-sec-lbl{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;padding:0 2px 4px;border-bottom:1px solid var(--border);}
+.sb-item{padding:5px 7px;border-radius:7px;cursor:pointer;font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px;margin-bottom:1px;transition:background .1s;user-select:none;}
+.sb-item:hover{background:var(--surface2);color:var(--text);}
+.sb-item.on{background:var(--surface2);color:var(--accent);font-weight:600;}
+.sb-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.sb-brand{display:flex;align-items:center;gap:5px;padding:5px 7px;border-radius:7px;font-size:11px;color:var(--muted);cursor:pointer;margin-bottom:2px;transition:background .1s;user-select:none;}
+.sb-brand:hover{background:var(--surface2);color:var(--text);}
+.sb-brand.on{background:var(--surface2);color:var(--text);font-weight:500;}
+.sb-tdot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.sb-detail{padding:3px 4px 6px 18px;}
+.sb-dlbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin:5px 0 3px;}
+.sb-ditem{font-size:10px;color:var(--muted);padding:2px 0 2px 6px;border-left:1.5px solid var(--border2);margin-bottom:1px;}
+
+/* ── MAIN ── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.search-bar{display:flex;gap:8px;padding:14px 20px;background:var(--surface);border-bottom:1px solid var(--border);}
+.search-bar input{flex:1;padding:8px 14px;background:var(--bg);border:1px solid var(--border2);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;transition:border .15s;}
+.search-bar input:focus{border-color:var(--accent);}
+.search-bar input::placeholder{color:var(--muted);}
+.search-bar button{padding:8px 20px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .15s;white-space:nowrap;}
+.search-bar button:hover{background:var(--accent2);}
+.search-bar button:disabled{background:var(--border2);cursor:not-allowed;}
+
+.ai-bar{display:flex;align-items:center;gap:8px;padding:10px 20px;background:var(--bg);border-bottom:1px solid var(--border);}
+.ai-bar input{flex:1;padding:7px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:12px;outline:none;}
+.ai-bar input::placeholder{color:var(--muted);}
+.ai-bar button{padding:5px 14px;background:var(--surface2);color:var(--accent);border:1px solid var(--border2);border-radius:7px;font-size:11px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;white-space:nowrap;}
+.ai-bar button:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+.ai-bar button:disabled{opacity:.5;cursor:not-allowed;}
+.ai-icon{color:var(--accent);font-size:16px;flex-shrink:0;}
+
+.content{flex:1;overflow-y:auto;padding:18px 20px;}
+
+/* ── AI REPLY ── */
+.ai-reply{background:rgba(91,110,245,.1);border:1px solid rgba(91,110,245,.3);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:var(--text);line-height:1.6;}
+
+/* ── SEC LABEL ── */
+.sec-lbl{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+
+/* ── BRAND CHIPS ── */
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
+.chip{padding:5px 14px;border-radius:99px;border:1px solid var(--border2);font-size:12px;font-weight:500;cursor:pointer;background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;transition:all .15s;}
+.chip:hover{color:var(--text);border-color:var(--muted);}
+.chip.on{background:var(--accent);color:#fff;border-color:var(--accent);}
+
+/* ── PRODUCT GRID ── */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:16px;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px;cursor:pointer;transition:border-color .15s;}
+.card:hover{border-color:var(--border2);}
+.card.on{border:1.5px solid var(--accent);}
+.card-img{width:100%;aspect-ratio:1;border-radius:8px;background:var(--surface2);display:flex;align-items:center;justify-content:center;margin-bottom:7px;overflow:hidden;font-size:30px;}
+.card-img img{width:100%;height:100%;object-fit:contain;}
+.card-name{font-size:11px;color:var(--muted);margin-bottom:3px;height:30px;overflow:hidden;line-height:1.4;}
+.card-price{font-size:13px;font-weight:600;color:var(--text);}
+.card-rating{font-size:10px;color:var(--muted);margin-top:2px;}
+.card-badge{display:inline-block;font-size:9px;padding:2px 6px;border-radius:4px;background:var(--green-bg);color:var(--green);font-weight:600;margin-top:3px;border:1px solid rgba(74,222,128,0.3);}
+
+/* ── STYLE GROUP ── */
+.style-grp{margin-bottom:18px;}
+.style-hdr{font-size:12px;font-weight:600;color:var(--text);padding:6px 10px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--accent);display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.style-cnt{font-size:10px;color:var(--muted);background:var(--bg);padding:2px 8px;border-radius:99px;border:1px solid var(--border);}
+.style-desc{font-size:10px;color:var(--muted);margin:-4px 0 8px 4px;}
+
+/* ── DETAIL PANEL ── */
+.detail{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-top:16px;}
+.detail-hdr{display:flex;gap:14px;margin-bottom:12px;}
+.detail-img{width:80px;height:80px;border-radius:8px;background:var(--surface2);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;border:1px solid var(--border);}
+.detail-img img{width:100%;height:100%;object-fit:contain;}
+.detail-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px;line-height:1.4;}
+.detail-sub{font-size:11px;color:var(--muted);margin-bottom:7px;}
+.detail-meta{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:7px;}
+.detail-mi{font-size:11px;color:var(--muted);}
+.detail-mi b{font-weight:600;color:var(--text);}
+.badges{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px;}
+.badge{font-size:10px;padding:2px 8px;border-radius:4px;font-weight:500;}
+.b-green{background:var(--green-bg);color:var(--green);border:1px solid rgba(74,222,128,0.3);}
+.b-blue{background:rgba(91,110,245,.15);color:var(--accent);border:1px solid rgba(91,110,245,.3);}
+.b-amber{background:rgba(245,158,11,.1);color:var(--amber);border:1px solid rgba(245,158,11,.3);}
+.amz-link{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--accent);text-decoration:none;margin-top:6px;}
+.amz-link:hover{text-decoration:underline;}
+.keepa-lbl{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:12px 0 6px;}
+.keepa-wrap{border-radius:8px;overflow:hidden;border:1px solid var(--border);}
+.keepa-wrap iframe{display:block;width:100%;height:400px;border:none;}
+
+/* ── UTILS ── */
+.divider{height:1px;background:var(--border);margin:12px 0;}
+.empty{text-align:center;padding:40px 16px;color:var(--muted);font-size:13px;}
+.empty-icon{font-size:28px;margin-bottom:8px;}
+.err{background:var(--red-bg);border:1px solid rgba(240,79,94,0.3);color:var(--red);padding:9px 13px;border-radius:8px;font-size:12px;margin-bottom:10px;}
+.spin{display:inline-block;width:13px;height:13px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-logo">fashion<span>research</span></div>
+  <div class="hdr-status">
+    <span class="status-pill s-green" id="keepa-status">⬤ Keepa Connected</span>
+    <span class="status-pill s-green" id="groq-status">⬤ GROQ Connected</span>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <div class="sb">
+    <div class="sb-title">Fabrics &amp; Styles</div>
+    <div class="sb-toggle">
+      <button class="sb-tab on" id="sb-on-btn" onclick="sbSwitch('on')">On Amazon</button>
+      <button class="sb-tab" id="sb-off-btn" onclick="sbSwitch('off')">Off Amazon</button>
+    </div>
+    <div id="sb-body"></div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <div class="search-bar">
+      <input id="q" type="text" placeholder="Search Amazon fashion e.g. 2 piece lounge set, women dress" value="2 piece lounge set"/>
+      <button id="search-btn" onclick="doSearch()">Search Amazon</button>
+    </div>
+
+    <div class="ai-bar">
+      <span class="ai-icon">✦</span>
+      <input id="ai-q" placeholder="Ask AI: compare brands, best style, trending fabric, good price?"/>
+      <button id="ai-btn" onclick="askAI()">Ask AI</button>
+    </div>
+
+    <div class="content" id="content">
+      <div class="empty">
+        <div class="empty-icon">🔍</div>
+        Search a fashion product above to see real Amazon brands, styles &amp; Keepa price graphs
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+var API = '';
+
+// ── API STATUS CHECK
+window.onload = function() {
+  renderSidebar();
+  document.getElementById('q').addEventListener('keydown', function(e){ if(e.key==='Enter') doSearch(); });
+  document.getElementById('ai-q').addEventListener('keydown', function(e){ if(e.key==='Enter') askAI(); });
+
+  fetch(API + '/api/health')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      document.getElementById('keepa-status').className = 'status-pill ' + (d.keepa==='connected' ? 's-green' : 's-red');
+      document.getElementById('keepa-status').textContent = (d.keepa==='connected' ? '⬤ Keepa Connected' : '⬤ Keepa Error');
+      document.getElementById('groq-status').className = 'status-pill ' + (d.groq==='connected' ? 's-green' : 's-red');
+      document.getElementById('groq-status').textContent = (d.groq==='connected' ? '⬤ GROQ Connected' : '⬤ GROQ Error');
+    })
+    .catch(function(){
+      document.getElementById('keepa-status').className = 'status-pill s-red';
+      document.getElementById('keepa-status').textContent = '⬤ Server Offline';
+      document.getElementById('groq-status').className = 'status-pill s-red';
+      document.getElementById('groq-status').textContent = '⬤ Server Offline';
+    });
+};
+
+// ── SIDEBAR DATA
+var SB_MODE = 'on';
+var SB_OPEN = null;
+var ACTIVE_FAB = null;
+
+var FABRICS = [
+  {n:'100% Cotton', d:'#34d399', k:'cotton'},
+  {n:'Polyester Blend', d:'#5b6ef5', k:'polyester'},
+  {n:'Fleece', d:'#f04f5e', k:'fleece'},
+  {n:'Denim', d:'#60a5fa', k:'denim'},
+  {n:'Nylon', d:'#f59e0b', k:'nylon'},
+  {n:'Wool Blend', d:'#a78bfa', k:'wool'},
+  {n:'Linen', d:'#2dd4bf', k:'linen'}
+];
+var STYLES = [
+  {n:'Casual', d:'#34d399'}, {n:'Slim Fit', d:'#5b6ef5'},
+  {n:'Oversized', d:'#f04f5e'}, {n:'Athletic', d:'#f59e0b'},
+  {n:'Business Casual', d:'#a78bfa'}, {n:'Streetwear', d:'#2dd4bf'}
+];
+var OFF_BRANDS = [
+  {n:'Gucci', t:'high', c:'#f04f5e', f:['Italian silk','GG jacquard','Leather','Cashmere'], s:['Maximalist luxury','Logo-forward','Floral prints','70s revival']},
+  {n:'Prada', t:'high', c:'#f04f5e', f:['Re-Nylon','Saffiano leather','Gabardine'], s:['Intellectual minimalism','Utilitarian luxury','Conceptual tailoring']},
+  {n:'Burberry', t:'high', c:'#f04f5e', f:['Gabardine trench','Cashmere check','British wool'], s:['British heritage','Nova check','Trench silhouette']},
+  {n:'Zara', t:'mid', c:'#f59e0b', f:['Recycled polyester','Viscose','Linen blends'], s:['Minimalist chic','Structured tailoring','Utility pockets']},
+  {n:'H&M', t:'mid', c:'#f59e0b', f:['Organic cotton','Lyocell TENCEL','Hemp blend'], s:['Scandi basics','Y2K revival','Relaxed tailoring']},
+  {n:'Uniqlo', t:'mid', c:'#f59e0b', f:['HeatTech','AIRism','Supima cotton','Merino wool'], s:['Functional minimalism','Timeless basics','Layering pieces']},
+  {n:"Levi's", t:'mid', c:'#f59e0b', f:['Selvedge denim','Stretch denim','Organic cotton denim'], s:['Classic Americana','Vintage wash','High-rise straight']},
+  {n:'Nike', t:'street', c:'#34d399', f:['Dri-FIT','Air mesh','Therma-FIT'], s:['Performance sport','Athleisure','Colorblock']},
+  {n:'Adidas', t:'street', c:'#34d399', f:['Primeknit','AEROREADY','Parley recycled'], s:['3-stripe heritage','Trefoil retro','Sporty casual']},
+  {n:'Off-White', t:'street', c:'#34d399', f:['Diag cotton','Industrial canvas','Mesh'], s:['Deconstructed streetwear','Industrial hardware','Oversized']}
+];
+
+function sbSwitch(mode) {
+  SB_MODE = mode;
+  SB_OPEN = null;
+  document.getElementById('sb-on-btn').classList.toggle('on', mode === 'on');
+  document.getElementById('sb-off-btn').classList.toggle('on', mode === 'off');
+  renderSidebar();
+}
+
+function renderSidebar() {
+  var el = document.getElementById('sb-body');
+  var h = '';
+  if (SB_MODE === 'on') {
+    h += '<div class="sb-sec"><div class="sb-sec-lbl">Fabrics</div>';
+    FABRICS.forEach(function(f) {
+      var cls = ACTIVE_FAB === f.n ? ' on' : '';
+      h += '<div class="sb-item' + cls + '" onclick="pickFabric(' + JSON.stringify(f.n) + ',' + JSON.stringify(f.k) + ')">';
+      h += '<span class="sb-dot" style="background:' + f.d + '"></span>' + f.n + '</div>';
+    });
+    h += '</div><div class="sb-sec"><div class="sb-sec-lbl">Styles</div>';
+    STYLES.forEach(function(s) {
+      h += '<div class="sb-item" onclick="pickStyle(' + JSON.stringify(s.n) + ')">';
+      h += '<span class="sb-dot" style="background:' + s.d + '"></span>' + s.n + '</div>';
+    });
+    h += '</div>';
+  } else {
+    var tiers = [{k:'high',l:'High-end'},{k:'street',l:'Streetwear'},{k:'mid',l:'Contemporary'}];
+    tiers.forEach(function(tier) {
+      h += '<div class="sb-sec"><div class="sb-sec-lbl">' + tier.l + '</div>';
+      OFF_BRANDS.filter(function(b){ return b.t === tier.k; }).forEach(function(b) {
+        var cls = SB_OPEN === b.n ? ' on' : '';
+        h += '<div class="sb-brand' + cls + '" onclick="toggleOffBrand(' + JSON.stringify(b.n) + ')">';
+        h += '<span class="sb-tdot" style="background:' + b.c + '"></span>';
+        h += '<span style="flex:1">' + b.n + '</span>';
+        h += '<span style="font-size:9px">' + (SB_OPEN===b.n ? '&#9650;' : '&#9660;') + '</span></div>';
+        if (SB_OPEN === b.n) {
+          h += '<div class="sb-detail"><div class="sb-dlbl">Fabrics</div>';
+          b.f.forEach(function(f){ h += '<div class="sb-ditem">' + f + '</div>'; });
+          h += '<div class="sb-dlbl">Styles</div>';
+          b.s.forEach(function(s){ h += '<div class="sb-ditem">' + s + '</div>'; });
+          h += '</div>';
+        }
+      });
+      h += '</div>';
+    });
+  }
+  el.innerHTML = h;
+}
+
+function pickFabric(name, kw) {
+  ACTIVE_FAB = ACTIVE_FAB === name ? null : name;
+  renderSidebar();
+  if (ACTIVE_FAB) {
+    var cur = document.getElementById('q').value.replace(/cotton|polyester|fleece|denim|nylon|wool|linen/gi, '').trim();
+    document.getElementById('q').value = (cur + ' ' + kw).trim();
+    doSearch();
+  }
+}
+
+function pickStyle(name) {
+  var cur = document.getElementById('q').value;
+  if (cur && !cur.toLowerCase().includes(name.toLowerCase().split(' ')[0])) {
+    document.getElementById('q').value = cur + ' ' + name.toLowerCase();
+  }
+  doSearch();
+}
+
+function toggleOffBrand(name) {
+  SB_OPEN = SB_OPEN === name ? null : name;
+  renderSidebar();
+}
+
+// ── PRODUCT STATE
+var products = [];
+var activeBrand = null;
+var activeProduct = null;
+var styleGroups = [];
+var brandProds = [];
+var ctx = {};
+
+// ── SEARCH
+async function doSearch() {
+  var q = document.getElementById('q').value.trim();
+  if (!q) return;
+  activeBrand = null; activeProduct = null; styleGroups = []; brandProds = [];
+  var btn = document.getElementById('search-btn');
+  btn.disabled = true; btn.textContent = 'Searching...';
+  setContent('<div class="empty"><span class="spin"></span>Fetching real Amazon data via Keepa...</div>');
+  clearAIReply();
+  try {
+    var resp = await fetch(API + '/api/keepa/search?term=' + encodeURIComponent(q));
+    if (!resp.ok) throw new Error('Server error: ' + resp.status);
+    var data = await resp.json();
+    if (data.error) throw new Error(data.error);
+    products = data.products || [];
+    if (!products.length) throw new Error('No products found for "' + q + '". Try a different search term.');
+    ctx = {query:q, count:products.length, brands:[...new Set(products.map(function(p){return p.brand;}).filter(Boolean))]};
+    renderContent();
+  } catch(e) {
+    setContent('<div class="err">❌ ' + e.message + '</div>');
+  }
+  btn.disabled = false; btn.textContent = 'Search Amazon';
+}
+
+// ── RENDER CONTENT
+function renderContent() {
+  if (!products.length) {
+    setContent('<div class="empty"><div class="empty-icon">📦</div>No products found. Search above.</div>');
+    return;
+  }
+
+  // Brand map
+  var bmap = {};
+  products.forEach(function(p, i) {
+    var b = p.brand || 'Unknown';
+    if (!bmap[b]) bmap[b] = [];
+    bmap[b].push(i);
+  });
+  var brands = Object.keys(bmap).slice(0, 12);
+
+  var h = '<div class="sec-lbl">Top brands on Amazon — ' + brands.length + ' brands found</div>';
+  h += '<div class="chips">';
+  brands.forEach(function(b) {
+    var cls = activeBrand === b ? ' on' : '';
+    h += '<button class="chip' + cls + '" onclick="pickBrand(' + JSON.stringify(b) + ')">' + b + '</button>';
+  });
+  h += '</div>';
+
+  if (activeBrand && bmap[activeBrand]) {
+    if (styleGroups.length > 0) {
+      // GROUPED BY STYLE
+      h += '<div class="sec-lbl">' + activeBrand + ' — ' + styleGroups.length + ' style variations found</div>';
+      styleGroups.forEach(function(grp) {
+        var prods = (grp.productIndices || []).map(function(i){ return brandProds[i]; }).filter(Boolean);
+        if (!prods.length) return;
+        h += '<div class="style-grp">';
+        h += '<div class="style-hdr">🏷️ ' + grp.styleName + '<span class="style-cnt">' + prods.length + ' listing' + (prods.length!==1?'s':'') + '</span></div>';
+        if (grp.description) h += '<div class="style-desc">' + grp.description + '</div>';
+        h += '<div class="grid">';
+        prods.forEach(function(p) {
+          var idx = products.indexOf(p);
+          h += makeCard(p, idx);
+        });
+        h += '</div></div>';
+      });
+    } else {
+      // FLAT LIST while style analysis loads
+      var prods = bmap[activeBrand].map(function(i){ return products[i]; });
+      h += '<div class="sec-lbl">' + activeBrand + ' — ' + prods.length + ' listings <span style="font-weight:400;color:var(--muted);font-size:9px">(analysing style variations...)</span></div>';
+      h += '<div class="grid">';
+      prods.forEach(function(p) {
+        var idx = products.indexOf(p);
+        h += makeCard(p, idx);
+      });
+      h += '</div>';
+    }
+  } else if (!activeBrand) {
+    h += '<div class="empty"><div class="empty-icon">👆</div>Click a brand above to see its style variations</div>';
+  }
+
+  // DETAIL PANEL
+  if (activeProduct) {
+    var p = activeProduct;
+    var price = p.currentPrice ? '$' + Number(p.currentPrice).toFixed(2) : 'N/A';
+    var top = (p.salesRank && p.salesRank < 50) ? '<span class="badge b-green">Top 50 BSR</span>' : '';
+    var rnk = p.salesRank ? '<span class="badge b-amber">BSR #' + p.salesRank + '</span>' : '';
+    h += '<div class="divider"></div>';
+    h += '<div class="sec-lbl">Product Detail &amp; Live Keepa Price History</div>';
+    h += '<div class="detail">';
+    h += '<div class="detail-hdr">';
+    h += '<div class="detail-img">' + makeImg(p.image, 'detail') + '</div>';
+    h += '<div style="flex:1;min-width:0">';
+    h += '<div class="detail-title">' + (p.title || 'Unknown') + '</div>';
+    h += '<div class="detail-sub">' + (p.brand||'') + ' &middot; ASIN: <b>' + p.asin + '</b></div>';
+    h += '<div class="detail-meta">';
+    h += '<div class="detail-mi">Price <b>' + price + '</b></div>';
+    h += '<div class="detail-mi">Rating <b>' + (p.rating ? p.rating+' ★' : 'N/A') + '</b></div>';
+    h += '<div class="detail-mi">Reviews <b>' + (p.reviewCount ? Number(p.reviewCount).toLocaleString() : 'N/A') + '</b></div>';
+    if (p.salesRank) h += '<div class="detail-mi">BSR <b>#' + p.salesRank + '</b></div>';
+    h += '</div>';
+    h += '<div class="badges">' + top + '<span class="badge b-blue">FBA Eligible</span>' + rnk + '</div>';
+    h += '<a class="amz-link" href="https://www.amazon.com/dp/' + p.asin + '" target="_blank">↗ View on Amazon</a>';
+    h += '</div></div>';
+    h += '<div class="keepa-lbl">📈 Keepa Price History — Live Interactive Graph</div>';
+    h += '<div class="keepa-wrap"><iframe src="https://keepa.com/#!product/1-' + p.asin + '" scrolling="no" loading="lazy"></iframe></div>';
+    h += '</div>';
+  }
+
+  setContent(h);
+}
+
+function makeCard(p, idx) {
+  var cls = (activeProduct && activeProduct.asin === p.asin) ? ' on' : '';
+  var price = p.currentPrice ? '$' + Number(p.currentPrice).toFixed(2) : 'N/A';
+  var stars = p.rating ? p.rating + ' ★' : '';
+  var revs = p.reviewCount ? '(' + Number(p.reviewCount).toLocaleString() + ')' : '';
+  var rnk = (p.salesRank && p.salesRank < 100) ? '<span class="card-badge">#' + p.salesRank + ' BSR</span>' : '';
+  var h = '<div class="card' + cls + '" onclick="pickProduct(' + idx + ')">';
+  h += '<div class="card-img">' + makeImg(p.image, 'card') + '</div>';
+  h += '<div class="card-name">' + (p.title || 'Unknown') + '</div>';
+  h += '<div class="card-price">' + price + '</div>';
+  h += '<div class="card-rating">' + stars + ' ' + revs + '</div>';
+  h += rnk + '</div>';
+  return h;
+}
+
+function makeImg(src, type) {
+  if (!src) return type === 'card' ? '👕' : '🛍️';
+  return '<img src="' + src + '" alt="" style="width:100%;height:100%;object-fit:contain" onerror="this.parentElement.innerHTML=\'' + (type==='card'?'👕':'🛍️') + '\'">';
+}
+
+// ── BRAND SELECTION WITH STYLE ANALYSIS
+async function pickBrand(name) {
+  activeBrand = activeBrand === name ? null : name;
+  activeProduct = null; styleGroups = []; brandProds = [];
+  renderContent();
+  if (!activeBrand) return;
+
+  // Build brand products list
+  var bmap = {};
+  products.forEach(function(p,i){ var b=p.brand||'Unknown'; if(!bmap[b]) bmap[b]=[]; bmap[b].push(i); });
+  var prods = (bmap[activeBrand]||[]).map(function(i){ return products[i]; });
+  if (!prods.length) return;
+  brandProds = prods;
+
+  // Ask GROQ to group by style variation
+  try {
+    var titles = prods.map(function(p,i){ return i + ': ' + p.title; }).join('\n');
+    var prompt = 'You are a fashion analyst. Group these Amazon product listings for brand "' + activeBrand + '" by STYLE VARIATION — different cuts, silhouettes, item combinations (e.g. "Crop Top + Pajama Set", "Quarter Zip + Jogger", "Tank Top + Biker Short", "Hoodie + Legging Set").\n\nProducts:\n' + titles + '\n\nReturn ONLY a raw JSON array, no markdown, no explanation:\n[{"styleName":"Crop Top + Pajama Set","productIndices":[0,2,5],"description":"Relaxed loungewear with cropped top and matching pajama bottoms"}]';
+
+    var resp = await fetch(API + '/api/groq', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({message: prompt, context: {}})
+    });
+    var data = await resp.json();
+    var txt = data.reply || '[]';
+    var s = txt.indexOf('[');
+    var e = txt.lastIndexOf(']');
+    if (s >= 0 && e >= 0) {
+      styleGroups = JSON.parse(txt.slice(s, e+1));
+    }
+  } catch(err) {
+    styleGroups = [];
+  }
+  renderContent();
+}
+
+function pickProduct(idx) {
+  var p = products[idx];
+  if (!p) return;
+  activeProduct = (activeProduct && activeProduct.asin === p.asin) ? null : p;
+  if (activeProduct) ctx.product = {title:p.title, price:p.currentPrice, brand:p.brand, rank:p.salesRank};
+  renderContent();
+  if (activeProduct) {
+    setTimeout(function(){
+      var detail = document.querySelector('.detail');
+      if (detail) detail.scrollIntoView({behavior:'smooth', block:'start'});
+    }, 100);
+  }
+}
+
+// ── AI
+async function askAI() {
+  var msg = document.getElementById('ai-q').value.trim();
+  if (!msg) return;
+  var btn = document.getElementById('ai-btn');
+  btn.disabled = true; btn.textContent = 'Thinking...';
+  clearAIReply();
+  try {
+    var resp = await fetch(API + '/api/groq', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({message: msg, context: ctx})
+    });
+    var data = await resp.json();
+    showAIReply(data.reply || 'No response.');
+  } catch(e) {
+    showAIReply('Error: ' + e.message);
+  }
+  btn.disabled = false; btn.textContent = 'Ask AI';
+  document.getElementById('ai-q').value = '';
+}
+
+// ── HELPERS
+function setContent(html) {
+  document.getElementById('content').innerHTML = html;
+}
+function clearAIReply() {
+  var existing = document.querySelector('.ai-reply-wrap');
+  if (existing) existing.remove();
+}
+function showAIReply(text) {
+  clearAIReply();
+  var div = document.createElement('div');
+  div.className = 'ai-reply-wrap';
+  div.innerHTML = '<div class="ai-reply" style="margin:0 20px 0">✦ ' + text + '</div>';
+  var content = document.getElementById('content');
+  content.parentNode.insertBefore(div, content);
+}
+</script>
+</body>
+</html>
